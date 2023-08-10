@@ -60,14 +60,17 @@ def get_filter_dictionary_or_operation(filter_string):
 def create_authorisation_header(request_body, created=None, expires=None):
     created = int(datetime.datetime.now().timestamp()) if created is None else created
     expires = int((datetime.datetime.now() + datetime.timedelta(hours=1)).timestamp()) if expires is None else expires
+
     signing_key = create_signing_string(hash_message(json.dumps(request_body, separators=(',', ':'))),
                                         created=created, expires=expires)
-    signature = sign_response(signing_key, private_key=get_config_by_name("BAP_PRIVATE_KEY"))
 
-    subscriber_id = get_config_by_name("BAP_ID")
-    unique_key_id = get_config_by_name("BAP_UNIQUE_KEY_ID")
+    signature = sign_response(signing_key, private_key="Ew/pm7Hmeb6q0vNghsw+tGgbH0/UdHoOjvwOQVViIc9+l0Jqtlca4ZNo062yg3NC/BJcSmh8cYN82fv4t9muvA==")
+
+    subscriber_id = "ondc-jatah.web.app"
+    unique_key_id = "710"
     header = f'Signature keyId="{subscriber_id}|{unique_key_id}|ed25519",algorithm="ed25519",created=' \
              f'"{created}",expires="{expires}",headers="(created) (expires) digest",signature="{signature}"'
+    print(header)
     return header
 
 
@@ -89,7 +92,10 @@ def generate_key_pairs():
     public_key = base64.b64encode(bytes(signing_key.verify_key)).decode()
     return private_key, public_key
 
-
+def test():
+    return print('here')
+    
+        
 def sign_registry_request(request):
     req_obj = []
     req_obj.append(request.get('country')) if request.get('country') else None
@@ -99,7 +105,7 @@ def sign_registry_request(request):
     req_obj.append(request.get('subscriber_id')) if request.get('subscriber_id') else None
 
     signing_string = "|".join(req_obj)
-    return sign_response(signing_string, private_key=get_config_by_name("BAP_PRIVATE_KEY"))
+    return sign_response(signing_string, private_key="Ew/pm7Hmeb6q0vNghsw+tGgbH0/UdHoOjvwOQVViIc9+l0Jqtlca4ZNo062yg3NC/BJcSmh8cYN82fv4t9muvA==")
 
 
 def format_registry_request_for_pre_prod(request, vlookup=False):
@@ -107,7 +113,7 @@ def format_registry_request_for_pre_prod(request, vlookup=False):
     if vlookup:
         signature = sign_registry_request(request)
         return {
-            "sender_subscriber_id": get_config_by_name("BAP_ID"),
+            "sender_subscriber_id": "ondc-jatah.web.app",
             "request_id": str(uuid.uuid4()),
             "timestamp": datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]+"Z",
             "search_parameters": request,
@@ -122,8 +128,6 @@ if __name__ == '__main__':
     # os.environ["BAP_PRIVATE_KEY"] = "lP3sHA+9gileOkXYJXh4Jg8tK0gEEMbf9yCPnFpbldhrAY+NErqL9WD+Vav7TE5tyVXGXBle9ONZi2W7o144eQ=="
     # os.environ["BAP_PUBLIC_KEY"] = "awGPjRK6i/Vg/lWr+0xObclVxlwZXvTjWYtlu6NeOHk="
     # private_key1, public_key1 = generate_key_pairs()
-    # os.environ["BAP_PRIVATE_KEY"] = private_key1
+    # os.environ["BAP_PRIVATE_KEY"] = private_key1 
     # os.environ["BAP_PUBLIC_KEY"] = public_key1
     auth_header1 = create_authorisation_header(request_body1)
-    print(auth_header1)
-    print(verify_authorisation_header(auth_header1, request_body1))

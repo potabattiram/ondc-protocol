@@ -31,9 +31,9 @@ class Config:
     COUNTRY_CODE = "IND"
     BAP_TTL = "20"
     BECKN_SECURITY_ENABLED = False
-    BAP_PRIVATE_KEY = os.getenv("BAP_PRIVATE_KEY", "some-key")
+    BAP_PRIVATE_KEY = "2b51801cec29bb540dff53f14b8e97f0d923285e"
     BAP_PUBLIC_KEY = os.getenv("BAP_PUBLIC_KEY", "some-key")
-    BAP_ID = os.getenv("BAP_ID", "buyer-app.ondc.org")
+    BAP_ID = os.getenv("BAP_ID", "ondc-jatah.web.app")
     BAP_UNIQUE_KEY_ID = os.getenv("BAP_UNIQUE_KEY_ID", "207")
     REGISTRY_BASE_URL = "https://pilot-gateway-1.beckn.nsdl.co.in"
     TTL_IN_SECONDS = int(os.getenv("TTL_IN_SECONDS", "3600"))
@@ -49,7 +49,7 @@ class DevelopmentConfig(Config):
     BAP_URL = "http://localhost:9002/protocol/v1"
     MONGO_DATABASE_HOST = "localhost"
     MONGO_DATABASE_PORT = 27017
-    MONGO_DATABASE_NAME = "sandbox_bap"
+    MONGO_DATABASE_NAME = "test"
     CLIENT_WEBHOOK_ENDPOINT = os.getenv("CLIENT_WEBHOOK_ENDPOINT", "https://616e-2409-4042-4d8d-a7b7-c127-cb03-c9c2-ecae.in.ngrok.io/clientApis/response")
 
 
@@ -113,6 +113,7 @@ def get_config_by_name(config_name, default=None, env_param_name=None):
     config_value = default
     if config_env:
         config_value = getattr(config_by_name[config_env](), config_name, default)
+        print(config_value)
     return config_value
 
 

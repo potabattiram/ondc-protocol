@@ -44,30 +44,33 @@ def requests_post(url, raw_data, headers=None):
 
 @MeasureTime
 def post_count_response_to_client(route, payload):
-    client_webhook_endpoint = get_config_by_name('CLIENT_WEBHOOK_ENDPOINT')
-    if "issue" in route:
-        client_webhook_endpoint = client_webhook_endpoint.replace(
-            "clientApi", "issueApi")
-    try:
-        status_code = requests_post_with_retries(
-            f"{client_webhook_endpoint}/{route}", payload=payload)
-    except requests.exceptions.HTTPError:
-        status_code = 400
-    except requests.exceptions.ConnectionError:
-        status_code = 500
-    except:
-        status_code = 500
-    log(f"Got {status_code} for {payload} on {route}")
-    return status_code
+    client_webhook_endpoint = get_config_by_name('CLIENT_WEBHOOK_ENDPOINT')     
+    if "issue" in route:     
+        client_webhook_endpoint = client_webhook_endpoint.replace(     
+            "clientApi", "issueApi")     
+    try:     
+        status_code = requests_post_with_retries(     
+            f"{client_webhook_endpoint}/{route}", payload=payload)     
+    except requests.exceptions.HTTPError:     
+        status_code = 400     
+    except requests.exceptions.ConnectionError:     
+        status_code = 500     
+    except:     
+        status_code = 500     
+    log(f"Got {status_code} for {payload} on {route}")     
+    return status_code     
 
 
 @MeasureTime
 def post_on_bg_or_bpp(url, payload, headers={}):
     log(f"Making POST call for {payload['context']['message_id']} on {url}")
     headers.update({'Content-Type': 'application/json'})
+    print(payload,'p1')
     raw_data = json.dumps(payload, separators=(',', ':'))
+    print(raw_data,'p2')
+    print(headers, 'p3')
     response_text, status_code = requests_post(url, raw_data, headers=headers)
-    return json.loads(response_text), status_code
+    return json.loads(response_text), status_code   
 
 
 def lookup_call(url, payload, headers=None):

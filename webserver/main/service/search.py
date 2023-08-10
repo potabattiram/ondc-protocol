@@ -145,7 +145,9 @@ def gateway_search(search_request):
     gateway_url = fetch_subscriber_url_from_lookup(request_type)
     search_url = f"{gateway_url}{request_type}" if gateway_url.endswith("/") else f"{gateway_url}/{request_type}"
     auth_header = create_authorisation_header(search_request)
+
     log(f"making request to bg or bpp with {search_request}")
+   
     return post_on_bg_or_bpp(search_url, payload=search_request, headers={'Authorization': auth_header})
 
 
@@ -189,7 +191,9 @@ def get_catalogues_for_message_id(**kwargs):
     skip = page_number * limit
     catalogs = mongo.collection_find_all(search_collection, query_object, sort_field, sort_order,
                                          skip=skip, limit=limit)
+    
     if catalogs:
+        print(catalogs)
         items = catalogs['data']
         catalogs['data'] = [cast_price_and_rating_to_string(i) for i in items]
         return catalogs

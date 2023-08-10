@@ -14,8 +14,10 @@ init_namespace = Namespace('init', description='Init Namespace')
 class BPPInit(Resource):
     path_schema = get_json_schema_for_given_path('/init')
 
+    print('hello ram')
     @expects_json(path_schema)
     def post(self):
+        
         request_payload = request.get_json()
         return bpp_post_call('init', request_payload)
 
